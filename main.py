@@ -1,35 +1,48 @@
 import requests
 import re
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ResultSet
+from typing import List
 
 
 def main() -> None:
     num_of_pages: int = find_num_of_pages()
+    data(num_of_pages)
 
 # this is the feature-next branch
 def find_num_of_pages() -> int:
-    next == True
-    while next == True:
-        i = 1
+    i = 1
+    page_number: str = str(i)
+    url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
+    URL = url
+    page = requests.get(URL)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(id="tribe-events-header")
+    header = results.find_all("li", class_= re.compile("tribe-events-nav-next tribe-events-nav-right"))
+
+    while len(header) != 0:
+        
         page_number: str = str(i)
         url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
         URL = url
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find(id="tribe-events-content")
-        events = results.find_all("div", class_= re.compile("type-tribe_events"))
-        if next exists:
+        results = soup.find(id="tribe-events-header")
+        header = results.find_all("li", class_= re.compile("tribe-events-nav-next tribe-events-nav-right"))
+        print("data for " + str(i))
+        if len(header) == 0:
+            print("There are no more events")
+        else:
+            
             i += 1
-            next == True
-        else: 
-            next == False
+        return i
 
 
 
 def data(num_of_pages: int) -> None:
-    while x <= num_of_pages:
+    while i <= num_of_pages:
         i = 1
-        page_number: str = str(i)
+        p = 1
+        page_number: str = str(p)
         url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
         URL = url
         page = requests.get(URL)
