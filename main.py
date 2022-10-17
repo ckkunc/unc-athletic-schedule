@@ -5,51 +5,34 @@ from typing import List
 
 
 def main() -> None:
-    num_of_pages: int = find_num_of_pages()
-    data(num_of_pages)
+    num_of_pages = find_num_of_pages()
+    event_data(num_of_pages)
 
-# this is the feature-next branch
-def find_num_of_pages() -> int:
+
+def find_num_of_pages() -> int: #Loops the counter while the 'next page' button exists to count the number of pages
+    #Sees if next button exists on 1st page
+    header = data("https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=","tribe-events-header", 
+    "li", "tribe-events-nav-next tribe-events-nav-right", 1)
     i = 1
-    page_number: str = str(i)
-    url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
-    URL = url
-    page = requests.get(URL)
-    soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(id="tribe-events-header")
-    header = results.find_all("li", class_= re.compile("tribe-events-nav-next tribe-events-nav-right"))
-
+    #While next button exists, increment counter and go to next page
     while len(header) != 0:
-        
-        page_number: str = str(i)
-        url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
-        URL = url
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find(id="tribe-events-header")
-        header = results.find_all("li", class_= re.compile("tribe-events-nav-next tribe-events-nav-right"))
-        print("data for " + str(i))
+        header = data("https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=","tribe-events-header", 
+        "li", "tribe-events-nav-next tribe-events-nav-right", i)
         if len(header) == 0:
-            print("There are no more events")
+            print("There are " + str(i) + " pages")
         else:
-            
             i += 1
-        return i
+    return i
 
 
-
-def data(num_of_pages: int) -> None:
-    while i <= num_of_pages:
-        i = 1
-        p = 1
-        page_number: str = str(p)
-        url: str = "https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=" + page_number
-        URL = url
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find(id="tribe-events-content")
-        events = results.find_all("div", class_= re.compile("type-tribe_events"))
-        i += 1
+def event_data(num_of_pages: int) -> None: #Prints data for all events 
+    i = 1
+    p = 1
+    while i <= num_of_pages:   
+        events = data("https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=", "tribe-events-content", 
+        "type-tribe_events", p)
+        #Finds specific classes corresponding to the event name, time, etc for each event
+        #Prints all the data
         for event in events:
             title = event.find("h3", class_ = "tribe-events-list-event-title")
             start_time = event.find("span", class_ = "tribe-event-date-start")
@@ -63,11 +46,20 @@ def data(num_of_pages: int) -> None:
                 print(end_time.text)
             else:
                 print("No scheduled time as of yet")
-            print(address.text)
+                print(address.text)
+        i += 1
+        p += 1
 
-#Loop while "next" button exists in html to get all the pages
-#Main function takes input
 
+def data(link: str, element: str, class_id: str, class_name: str, page_number: int) -> ResultSet:
+    #Get html code through BeautifulSoup
+    #Takes in arguments to find specific elements
+    url: str = link + str(page_number)
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, "html.parser")
+    results = soup.find(id= element)
+    data = results.find_all(class_id, class_= re.compile(class_name))
+    return data
 
 
 if __name__ == "__main__":
