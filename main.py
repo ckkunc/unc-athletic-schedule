@@ -7,7 +7,7 @@ from typing import List
 def main() -> None:
     num_of_pages = find_num_of_pages()
     event_data(num_of_pages)
-
+        
 
 def find_num_of_pages() -> int: #Loops the counter while the 'next page' button exists to count the number of pages
     #Sees if next button exists on 1st page
@@ -30,7 +30,7 @@ def event_data(num_of_pages: int) -> None: #Prints data for all events
     p = 1
     while i <= num_of_pages:   
         events = data("https://move.unc.edu/calendar/category/athletics/list/?tribe_paged=", "tribe-events-content", 
-        "type-tribe_events", p)
+        "div", "type-tribe_events", p)
         #Finds specific classes corresponding to the event name, time, etc for each event
         #Prints all the data
         for event in events:
@@ -41,12 +41,13 @@ def event_data(num_of_pages: int) -> None: #Prints data for all events
             
             print(title.text)
             print(start_time.text)
+            print(address.text)
 
             if end_time != None:
                 print(end_time.text)
             else:
                 print("No scheduled time as of yet")
-                print(address.text)
+   
         i += 1
         p += 1
 
