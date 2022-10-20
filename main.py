@@ -8,7 +8,7 @@ from typing import List
 def main() -> None: 
     print("\n" + "List of UNC sports: " + "\n")
     list_of_sports()
-    sport = input("\n" + "Enter the number of the sport you want to search for: ")
+    sport = input("\n" + "Enter the name of the sport you want to search for: ")
     address = input_data(sport)
     print("")
     event_data(address)
