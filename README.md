@@ -1,5 +1,6 @@
 # UNC Athletic Schedule
-This program will let users see the UNC athletic schedule, sort by sport, and receive emails if they want reminders of upcoming games.
+This program will let users see the UNC athletic schedule, sort by sport, and view upcoming games/past results.
 
 ## Current status
-So far, returns data on all games in only the first page of the website.
+Returns full schedule, both past and upcoming games.
+Able to sort by sport.
