@@ -2,21 +2,20 @@ from types import NoneType
 import requests
 import re
 from bs4 import BeautifulSoup, ResultSet
-from typing import List
 
 
 def main() -> None: 
     print("\n" + "List of UNC sports: " + "\n")
     list_of_sports()
     sport = input("\n" + "Enter the name of the sport you want to search for: ")
-    address = input_data(sport)
+    link = input_data(sport)
     print("")
-    event_data(address)
+    event_data(link)
         
 
 def event_data(sport: str) -> None: #Prints data for all events 
     events = data("https://goheels.com/sports/" + sport +  "/schedule", "sidearm-schedule-games-container", 
-    "li", "sidearm-schedule-game ")
+    "li", "sidearm-schedule-game ", sport)
     #Finds specific classes corresponding to the event name, time, etc for each event
     #Prints all the data
     for event in events:
@@ -54,20 +53,27 @@ def event_data(sport: str) -> None: #Prints data for all events
         else:
             print(location.text.strip() + "\n" + "Promotion: " + x.strip())
 
+        #If there is no time for the game, it means it has already passed and results are available
         if time == None:
             print("Result: " + result.text.strip())
         else:
             print(time.text.strip())
 
 
-def data(link: str, element: str, class_id: str, class_name: str) -> ResultSet:
+def data(link: str, element: str, class_id: str, class_name: str, sport: str) -> ResultSet:
     #Get html code through BeautifulSoup
     #Takes in arguments to find specific elements
     page = requests.get(link)
     soup = BeautifulSoup(page.content, "html.parser")
     results = soup.find(class_ = element)
-    data = results.find_all(class_id, class_= re.compile(class_name))
-    return data
+
+    #In case the name of the sport was entered incorrectly or doesn't exist
+    if results == None:
+        print(f"Sorry, it seems there is no schedule for '{sport}'.")
+        main()
+    else:
+        data = results.find_all(class_id, class_= re.compile(class_name))
+        return data
 
 
 def list_of_sports() -> None:
@@ -101,13 +107,14 @@ def list_of_sports() -> None:
 
 
 def input_data(input: str) -> str:
-    output = input
+    new = input
     for char in input:
         if char == "'":
-            output = input[:input.index(char)] + input[input.index(char) + 1:]
-        elif char == " ":
-            output = output[:input.index(char) - 1] + "-" + output[input.index(char):]
-    return(output.lower()) 
+            new = input[:input.index(char)] + input[input.index(char) + 1:]
+    for char in new:
+       if char == " ":
+          new = new[:new.index(char)] + "-" + new[new.index(char) + 1:]
+    return(new.lower()) 
 
 
 if __name__ == "__main__":
